@@ -1,0 +1,5 @@
+{"prompt": "### Task:\nWrite a Python function that adds two numbers.\n### Answer:\n", "completion": "def add(a, b):\n    return a + b"}
+{"prompt": "### Task:\nWrite a Python function that returns the square of a number.\n### Answer:\n", "completion": "def square(x):\n    return x * x"}
+{"prompt": "### Task:\nWrite a Python function that checks if a number is even.\n### Answer:\n", "completion": "def is_even(n):\n    return n % 2 == 0"}
+{"prompt": "### Task:\nWrite a Python function that reverses a list.\n### Answer:\n", "completion": "def reverse_list(lst):\n    return lst[::-1]"}
+{"prompt": "### Task:\nWrite a Python function that finds the maximum of two numbers.\n### Answer:\n", "completion": "def max_of_two(a, b):\n    return a if a > b else b"}
