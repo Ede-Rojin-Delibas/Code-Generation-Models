@@ -5,6 +5,8 @@ __pycache__/
 *.pt
 outputs/
 .env
-data/raw/
-data/processed/
+data/*
+#but allow small test datasets
+!data/processed/
+!data/processed/test_small.jsonl
 .ipynb_checkpoints/
