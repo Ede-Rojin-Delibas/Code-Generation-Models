@@ -1,0 +1,3 @@
+{"prompt": "### Task:\nWrite a Python function that matches the following code.\n\n### Answer:\n", "completion": "def add(a, b):\n    return a + b\n"}
+{"prompt": "### Task:\nWrite a Python function that matches the following code.\n\n### Answer:\n", "completion": "def subtract(a, b):\n    return a - b\n"}
+{"prompt": "### Task:\nWrite a Python function that matches the following code.\n\n### Answer:\n", "completion": "def multiply(a, b):\n    return a * b\n"}

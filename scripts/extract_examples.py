@@ -18,7 +18,7 @@ RAW_DATA_DIR = Path("data/raw")
 OUTPUT_FILE = Path("data/processed/train.jsonl")
 
 PROMPT_TEMPLATE = """### Task:
-Write a Python code based on the following description.
+Write a Python function that matches the following code.
 
 ### Answer:
 """
@@ -44,7 +44,7 @@ def build_example(code: str) -> dict:
     """
     return {
         "prompt": PROMPT_TEMPLATE,
-        "completion": code.strip()
+        "completion": code.strip() + "\n"
     }
 
 
