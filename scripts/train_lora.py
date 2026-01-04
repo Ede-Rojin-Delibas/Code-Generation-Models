@@ -7,9 +7,9 @@ from transformers import (AutoModelForCausalLM, #It's for code generation model
                             DataCollatorForLanguageModeling) #bathching
 from peft import LoraConfig, get_peft_model #for adding LoRA adapters
 
-MODEL_NAME="microsoft/phi-2"
+MODEL_NAME="TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 DATASET_PATH="data/processed/test_small.jsonl"
-OUTPUT_DIR="outputs/phi2-lora"
+OUTPUT_DIR="outputs/lora_tinyllama"
 
 MAX_LENGTH=256
 BATCH_SIZE=1
