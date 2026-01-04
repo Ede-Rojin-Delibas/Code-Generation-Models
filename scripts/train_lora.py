@@ -11,8 +11,8 @@ MODEL_NAME="microsoft/phi-2"
 DATASET_PATH="data/processed/test_small.jsonl"
 OUTPUT_DIR="outputs/phi2-lora"
 
-MAX_LENGTH=512
-BATCH_SIZE=2
+MAX_LENGTH=256
+BATCH_SIZE=1
 EPOCHS=3
 LR=2e-4
 
@@ -44,7 +44,7 @@ tokenized_dataset=dataset.map(
 
 model=AutoModelForCausalLM.from_pretrained(
     MODEL_NAME,
-    torch_dtype=torch.float16,
+    dtype=torch.float16,
     device_map="auto"
 )
 
@@ -58,6 +58,7 @@ lora_config=LoraConfig(
 )
 
 model=get_peft_model(model,lora_config)
+model.gradient_checkpointing_enable()
 model.print_trainable_parameters()
 
 training_args=TrainingArguments(
