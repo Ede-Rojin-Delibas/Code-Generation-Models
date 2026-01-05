@@ -38,13 +38,17 @@ def read_code_file(file_path: Path) -> str:
         return ""
 
 
-def build_example(code: str) -> dict:
+def build_example(code: str,filename: str) -> dict:
     """
     Ham kodu prompt-completion formatına dönüştürür.
     """
     return {
-        "prompt": PROMPT_TEMPLATE,
-        "completion": code.strip() + "\n"
+        "prompt": f"""### Task:
+Write a Python function similar to `{filename}`.
+
+### Answer:
+""",
+        "completion": code.strip()
     }
 
 
@@ -65,7 +69,7 @@ def main():
         if not code or len(code.strip()) < 20:
             continue  # çok kısa veya boş dosyaları atla
 
-        example = build_example(code)
+        example = build_example(code,file_path.name)
         examples.append(example)
 
     print(f"Total examples extracted: {len(examples)}")
