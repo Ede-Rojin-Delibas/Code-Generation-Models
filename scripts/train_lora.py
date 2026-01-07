@@ -10,7 +10,7 @@ from transformers import default_data_collator
 
 
 MODEL_NAME="TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-DATASET_PATH="data/processed/test_small.jsonl"
+DATASET_PATH="data/processed/train.jsonl"
 OUTPUT_DIR="outputs/lora_tinyllama"
 
 MAX_LENGTH=256
@@ -24,8 +24,12 @@ tokenizer.pad_token=tokenizer.eos_token
 dataset=load_dataset(
     "json",
     data_files=DATASET_PATH
-)
-dataset=dataset["train"]
+)["train"]
+
+dataset=dataset.shuffle(seed=42)
+split = dataset.train_test_split(test_size=0.05)
+train_dataset = split["train"]
+eval_dataset = split["test"]
 
 def tokenize_function(example):
     text=example["prompt"]+example["completion"]
@@ -52,8 +56,8 @@ model=AutoModelForCausalLM.from_pretrained(
 model.gradient_checkpointing_enable()
 model.enable_input_require_grads()
 lora_config=LoraConfig(
-    r=8,
-    lora_alpha=16,
+    r=16,
+    lora_alpha=32,
     target_modules=["q_proj","k_proj","v_proj","o_proj"],
     lora_dropout=0.05,
     bias="none",
@@ -79,7 +83,8 @@ training_args=TrainingArguments(
 trainer=Trainer(
     model=model,
     args=training_args,
-    train_dataset=tokenized_dataset,
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset,
     data_collator=default_data_collator
 )
 trainer.train()

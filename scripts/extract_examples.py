@@ -1,78 +1,83 @@
-#Preparing prompt/completion pairs from raw dataset
 import json
 from pathlib import Path
 
 """
 extract_examples.py
 
-Bu script:
-- data/raw/ altındaki Python dosyalarını okur
-- Her dosyayı bir instruction-style prompt + completion örneğine dönüştürür
-- Sonucu JSONL formatında data/processed/ klasörüne kaydeder
+- data/raw/*.py        → manuel küçük dataset
+- data/raw/github_code.jsonl → GitHub büyük dataset
+
+Hepsini instruction-style prompt + completion'a çevirir
 """
 
 # -----------------------------
 # CONFIG
 # -----------------------------
 RAW_DATA_DIR = Path("data/raw")
+GITHUB_JSONL = RAW_DATA_DIR / "github_code.jsonl"
 OUTPUT_FILE = Path("data/processed/train.jsonl")
 
-PROMPT_TEMPLATE = """### Task:
-Write a Python function that matches the following code.
+PROMPT_TEMPLATE = """### Instruction:
+You are a helpful assistant that writes clean, correct, and efficient Python code.
+
+### Task:
+Generate the Python code.
 
 ### Answer:
 """
 
-VALID_EXTENSIONS = {".py"}
+MIN_CODE_LENGTH = 50
 
 # -----------------------------
-# HELPER FUNCTIONS
+# HELPERS
 # -----------------------------
-def read_code_file(file_path: Path) -> str:
-    """
-    Bir kod dosyasını güvenli şekilde okur.
-    """
-    try:
-        return file_path.read_text(encoding="utf-8")
-    except Exception:
-        return ""
-
-
-def build_example(code: str,filename: str) -> dict:
-    """
-    Ham kodu prompt-completion formatına dönüştürür.
-    """
+def build_example(code: str) -> dict:
     return {
-        "prompt": f"""### Task:
-Write a Python function similar to `{filename}`.
-
-### Answer:
-""",
+        "prompt": PROMPT_TEMPLATE,
         "completion": code.strip()
     }
 
 
+def process_py_files(examples: list):
+    for file_path in RAW_DATA_DIR.rglob("*.py"):
+        try:
+            code = file_path.read_text(encoding="utf-8")
+            if len(code.strip()) < MIN_CODE_LENGTH:
+                continue
+            examples.append(build_example(code))
+        except Exception:
+            continue
+
+
+def process_github_jsonl(examples: list):
+    if not GITHUB_JSONL.exists():
+        return
+
+    with GITHUB_JSONL.open("r", encoding="utf-8") as f:
+        for line in f:
+            try:
+                item = json.loads(line)
+                code = item.get("content", "")
+                if len(code.strip()) < MIN_CODE_LENGTH:
+                    continue
+                examples.append(build_example(code))
+            except Exception:
+                continue
+
+
 # -----------------------------
-# MAIN LOGIC
+# MAIN
 # -----------------------------
 def main():
     examples = []
 
-    print(f"Scanning raw data directory: {RAW_DATA_DIR}")
+    print("Processing local .py files...")
+    process_py_files(examples)
 
-    for file_path in RAW_DATA_DIR.rglob("*"):
-        if file_path.suffix not in VALID_EXTENSIONS:
-            continue
+    print("Processing GitHub JSONL dataset...")
+    process_github_jsonl(examples)
 
-        code = read_code_file(file_path)
-
-        if not code or len(code.strip()) < 20:
-            continue  # çok kısa veya boş dosyaları atla
-
-        example = build_example(code,file_path.name)
-        examples.append(example)
-
-    print(f"Total examples extracted: {len(examples)}")
+    print(f"Total examples collected: {len(examples)}")
 
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
 
