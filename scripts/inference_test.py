@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 
 BASE_MODEL = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-#LORA_PATH = "outputs/lora_tinyllama"
+LORA_PATH = "outputs/lora_tinyllama"
 
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 model = AutoModelForCausalLM.from_pretrained(
@@ -12,7 +12,7 @@ model = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 )
 
-#model = PeftModel.from_pretrained(model, LORA_PATH)
+model = PeftModel.from_pretrained(model, LORA_PATH)
 model.eval()
 
 prompt = """### Task:
