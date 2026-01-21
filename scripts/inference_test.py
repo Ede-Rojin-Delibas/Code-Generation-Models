@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 
 BASE_MODEL = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
-LORA_PATH = "outputs/lora_tinyllama"
+LORA_PATH = "/content/drive/MyDrive/code-llm-finetune/hf_cache/models--TinyLlama--TinyLlama-1.1B-Chat-v1.0/.no_exist/fe8a4ea1ffedaf415f4da2f062534de366a451e6/adapter_config.json"
 
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 model = AutoModelForCausalLM.from_pretrained(
